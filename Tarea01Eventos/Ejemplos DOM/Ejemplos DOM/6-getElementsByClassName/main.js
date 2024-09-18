@@ -1,0 +1,53 @@
+// Con getElementsByClassName trabajamos de la misma forma que con getElementsByName y getElementsByTagName. En este caso las seleccionamos 
+// los distintos elementos del arbol DOM a partir de las clases CSS.
+// Con este selector, seleccionamos TODOS los elementos del árbol DOM que tengan la clase CSS indicada.
+// Ejemplo, seleccionamos todos los elementos que tengan la clase 'titulo'.
+
+console.log(document.getElementsByClassName('titulo'));
+
+// Como podemos comprobar, devuelve un HTMLCollection con todos los elementos seleccionados. 
+// HTMLCollection no es un array. Se trabaja de la misma forma que con los arrays, pero no es un array. 
+
+// Para acceder a un elemento en concreto, también indicamos la posición:
+
+console.log(document.getElementsByClassName('titulo')[0]);
+console.log(document.getElementsByClassName('titulo')[1]);
+console.log(document.getElementsByClassName('titulo')[2]);
+console.log(document.getElementsByClassName('titulo')[3]);
+console.log(document.getElementsByClassName('titulo')[4]);
+
+
+// Al igual que sucedía con el selector getElementsById, podemos guardarlo en una variable:
+
+let titles = document.getElementsByClassName('titulo');
+
+console.log(titles);
+
+// Y seguimos pudiendo acceder a los distintos elementos a partir de la variable:
+
+console.log(titles[0]);
+console.log(titles[1]);
+console.log(titles[2]);
+console.log(titles[3]);
+console.log(titles[4]);
+
+
+// Al igual que al trabajar con arrays, podemos aplicar .length para saber cuantos elementos hemos seleccionado:
+
+console.log(titles.length);
+
+// Podemos aplicar las estructuras de programación que ya conocemos.
+// Ejemplo de for para iterar sobre todos los elementos seleccionados:
+
+// Ejemplo sin guardar en una variable:
+
+for (let i = 0; i < document.getElementsByClassName('titulo').length; i++) {
+    console.log(document.getElementsByClassName('titulo')[i]);
+}
+
+
+// Ejemplo de for para iterar sobre la variable ya guardada 'contents', ayuda a que el código sea más legible:
+
+for (let i = 0; i < titles.length; i++) {
+    console.log(titles[i]);
+}
