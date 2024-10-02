@@ -110,6 +110,20 @@ let imageIndex = 0;
 let currentItemIndex = 0;
 let currentItemsType = fruits;
 
+const existingVignette = document.querySelector(".vignette");
+if (existingVignette) {
+    existingVignette.remove();
+}
+
+// const updateVignetteImage = (index) => {
+//     const vignetteDiv = document.createElement("div");
+//     vignetteDiv.className = "vignette";
+//     const vignetteImg = document.createElement("img");
+//     vignetteImg.src = currentItemsType[index].urls[imageIndex];
+//     vignetteDiv.appendChild(vignetteImg);
+//     return vignetteDiv;
+// };
+
 const updateVigneteImage = () => {
     vignetteImage.src = currentItemsType[currentItemIndex].urls[imageIndex];
 };
@@ -149,6 +163,16 @@ const mouseOverTitle = () => {
             updateImageH2Title();
             updateVigneteImage();
             updateCarusselImage();
+
+            // // Eliminar cualquier div vignette existente dentro del párrafo
+            // const existingVignette = element.querySelector(".vignette");
+            // if (existingVignette) {
+            //     existingVignette.remove();
+            // }
+
+            // // Crear y añadir el nuevo div vignette dentro del párrafo
+            // const newVignette = updateVignetteImage(index);
+            // element.appendChild(newVignette);
         };
         element.textContent = currentItemsType[index].name;
         element.style.opacity = defaultOpacity;
