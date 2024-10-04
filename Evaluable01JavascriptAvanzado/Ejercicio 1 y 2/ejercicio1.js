@@ -110,10 +110,10 @@ let imageIndex = 0;
 let currentItemIndex = 0;
 let currentItemsType = fruits;
 
-const existingVignette = document.querySelector(".vignette");
-if (existingVignette) {
-    existingVignette.remove();
-}
+// const existingVignette = document.querySelector(".vignette");
+// if (existingVignette) {
+//     existingVignette.remove();
+// }
 
 // const updateVignetteImage = (index) => {
 //     const vignetteDiv = document.createElement("div");
