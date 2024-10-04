@@ -108,7 +108,13 @@ const nextButton = buttons[1];
 
 let imageIndex = 0;
 let currentItemIndex = 0;
-let currentItemsType = fruits;
+let currentItemsType = extractItemsType();
+
+const extractItemsType = () => {
+    const h1Title = document.getElementsByTagName("h1")[0];
+
+    return h1Title.textContent === "Frutas" ? fruits : vegetables;
+};
 
 // const existingVignette = document.querySelector(".vignette");
 // if (existingVignette) {
