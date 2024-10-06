@@ -82,14 +82,9 @@ let currentItemImageIndex = 0;
 
 const h1Title = document.getElementsByTagName("h1")[0];
 
-const tds = document.getElementsByTagName("td");
-console.log(tds);
+const spansButtons = document.getElementsByTagName("span");
 
-const firstButtons = Array.from(tds).slice(0, 2);
-console.log(firstButtons);
-const secondButtons = Array.from(tds).slice(3, 5);
-console.log(secondButtons);
-const tdImage = tds[2];
+const tdImage = document.getElementsByTagName("td")[2];
 console.log(tdImage);
 
 const imageContainer = tdImage.getElementsByTagName("img")[0];
@@ -112,22 +107,25 @@ const updateDisplay = () => {
 };
 
 const previousFirstButton = () => {
-    currentItemIndex =
-        (currentItemIndex - 1 + categories[currentCategoryIndex].length) %
-        categories[currentCategoryIndex].length;
+    currentCategoryIndex =
+        currentCategoryIndex === 0
+            ? categories.length - 1
+            : currentCategoryIndex - 1;
     updateDisplay();
 };
 
 const nextFirstButton = () => {
-    currentItemIndex =
-        (currentItemIndex + 1) % categories[currentCategoryIndex].length;
+    currentCategoryIndex =
+        currentCategoryIndex === categories.length - 1
+            ? 0
+            : currentCategoryIndex + 1;
     updateDisplay();
 };
 
-console.log(firstButtons[0]);
 const initilizeFirstButtons = () => {
-    firstButtons[0].addEventListener("click", previousFirstButton);
-    firstButtons[1].addEventListener("click", nextFirstButton);
+    spansButtons[0].addEventListener("click", previousFirstButton);
+    spansButtons[1].addEventListener("click", nextFirstButton);
 };
+
 initilizeFirstButtons();
 updateDisplay();
