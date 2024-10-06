@@ -1,11 +1,11 @@
 /* global changeItemsType */
 
-function validateRequest(text) {
+const validateRequest = (text) => {
     const formatText = text.trim().toLowerCase();
     const regexp = /^(frutas|verduras)$/i;
 
     return regexp.test(formatText);
-}
+};
 
 const mainDiv = document.getElementsByTagName("main")[0];
 
