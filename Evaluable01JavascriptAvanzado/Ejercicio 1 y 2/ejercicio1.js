@@ -95,7 +95,6 @@ const vegetables = [
 ];
 
 const pNames = document.getElementsByTagName("p");
-const currentItemsTypeTitle = document.getElementsByTagName("h1")[0];
 const imageH2Title = document.getElementsByTagName("h2")[0];
 
 const imagesContainer = document.getElementsByTagName("img");
@@ -106,41 +105,30 @@ const buttons = document.getElementsByTagName("button");
 const previousButton = buttons[0];
 const nextButton = buttons[1];
 
+const defaultOpacity = "0.5";
+
 let imageIndex = 0;
 let currentItemIndex = 0;
-let currentItemsType = extractItemsType();
+let currentItemsType = fruits;
 
-const extractItemsType = () => {
-    const h1Title = document.getElementsByTagName("h1")[0];
-
-    return h1Title.textContent === "Frutas" ? fruits : vegetables;
+const changeItemsType = (h1Title) => {
+    currentItemsType = h1Title === "Frutas" ? fruits : vegetables;
+    updatePageType();
 };
-
-// const existingVignette = document.querySelector(".vignette");
-// if (existingVignette) {
-//     existingVignette.remove();
-// }
-
-// const updateVignetteImage = (index) => {
-//     const vignetteDiv = document.createElement("div");
-//     vignetteDiv.className = "vignette";
-//     const vignetteImg = document.createElement("img");
-//     vignetteImg.src = currentItemsType[index].urls[imageIndex];
-//     vignetteDiv.appendChild(vignetteImg);
-//     return vignetteDiv;
-// };
 
 const updateVigneteImage = () => {
-    vignetteImage.src = currentItemsType[currentItemIndex].urls[imageIndex];
+    vignetteImage.src = currentItemsType[currentItemIndex].urls[0];
 };
+
 const updateCarusselImage = () => {
     carusselImage.src = currentItemsType[currentItemIndex].urls[imageIndex];
 };
+
 const updateImageH2Title = () => {
     imageH2Title.textContent = currentItemsType[currentItemIndex].name;
 };
 
-const buttonsFuncionality = () => {
+const initializeButtonsFuncionality = () => {
     const nextEventListener = () => {
         imageIndex =
             (imageIndex + 1) % currentItemsType[currentItemIndex].urls.length;
@@ -157,35 +145,44 @@ const buttonsFuncionality = () => {
     nextButton.addEventListener("click", nextEventListener);
 };
 
-const mouseOverTitle = () => {
+const setElementOpacity = (element, opacity) => {
+    element.style.opacity = opacity;
+};
+
+const updateContent = (index) => {
+    currentItemIndex = index;
+    imageIndex = 0;
+    updateImageH2Title();
+    updateVigneteImage();
+    updateCarusselImage();
+};
+
+const addMouseOverEvent = (element, index) => {
+    const eventListener = () => {
+        const newOpacity = element.style.opacity === defaultOpacity ? "1" : defaultOpacity;
+        setElementOpacity(element, newOpacity);
+        updateContent(index);
+    };
+
+    element.addEventListener("mouseover", eventListener);
+    element.addEventListener("mouseout", eventListener);
+};
+
+const initializeTitles = () => {
     Array.from(pNames).forEach((element, index) => {
-        const defaultOpacity = "0.5";
-
-        const eventListener = () => {
-            element.style.opacity =
-                element.style.opacity === defaultOpacity ? "1" : defaultOpacity;
-            currentItemIndex = index;
-            imageIndex = 0;
-            updateImageH2Title();
-            updateVigneteImage();
-            updateCarusselImage();
-
-            // // Eliminar cualquier div vignette existente dentro del párrafo
-            // const existingVignette = element.querySelector(".vignette");
-            // if (existingVignette) {
-            //     existingVignette.remove();
-            // }
-
-            // // Crear y añadir el nuevo div vignette dentro del párrafo
-            // const newVignette = updateVignetteImage(index);
-            // element.appendChild(newVignette);
-        };
         element.textContent = currentItemsType[index].name;
-        element.style.opacity = defaultOpacity;
-        element.addEventListener("mouseover", eventListener);
-        element.addEventListener("mouseout", eventListener);
+        setElementOpacity(element, defaultOpacity);
+        addMouseOverEvent(element, index);
     });
 };
 
-mouseOverTitle();
-buttonsFuncionality();
+const updatePageType = () => {
+    Array.from(pNames).forEach((element, index) => {
+        element.textContent = currentItemsType[index].name;
+    });
+
+    updateContent(0);
+};
+
+initializeButtonsFuncionality();
+initializeTitles();

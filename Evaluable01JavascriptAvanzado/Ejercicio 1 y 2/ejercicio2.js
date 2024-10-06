@@ -1,3 +1,5 @@
+/* global changeItemsType */
+
 function validateRequest(text) {
     const formatText = text.trim().toLowerCase();
     const regexp = /^(frutas|verduras)$/i;
@@ -43,22 +45,24 @@ submitButton.textContent = "Enviar";
 
 form.appendChild(submitButton);
 
+const h1Title = document.getElementsByTagName("h1")[0];
+
+const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
+
 form.addEventListener("submit", function (event) {
     event.preventDefault();
 
     if (validateRequest(inputText.value)) {
-        // Aquí se adaptarán los contenidos de la aplicación
-        let h1Title = document.getElementsByTagName("h1")[0];
-        h1Title.textContent = inputText
-        console.log("Término correcto: " + inputTextValue);
+        h1Title.textContent = capitalizeFirstLetter(inputText.value);
+        changeItemsType(h1Title.textContent);
 
-        modalDiv.className = "modal"; // Ocultar la pantalla modal
+        modalDiv.className = "modal";
     } else {
         alert("Los datos introducidos no son correctos.");
     }
 });
-
-const h1Title = document.getElementsByTagName("h1")[0];
 
 h1Title.addEventListener("click", function () {
     modalDiv.className = "modal show-modal";
