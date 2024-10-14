@@ -11,7 +11,8 @@ const photoDiv = document.querySelectorAll("div .photo");
 Array.from(photoDiv).map((value, index) => {
     const newImg = document.createElement("img");
     newImg.src = listPhotos[index];
-    newImg.style.width = "400px";
-    newImg.style.height = "300px";
+    newImg.style.width = "100%";
+    newImg.style.height = "100%";
+    newImg.style.objectFit = "cover";
     value.appendChild(newImg);
 });
