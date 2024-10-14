@@ -1,15 +1,34 @@
-const images = document.getElementsByTagName("img");
+document.addEventListener("DOMContentLoaded", () => {
+    const images = document.querySelectorAll("img");
+    const fullOpacity = "100%";
+    const lowOpacity = "60%";
+    const intervalTime = 100;
+    const totalImages = images.length;
 
-const lowOpacity = "60%"
-const fullOpacity = "100%";
+    const changeOpacity = (opacity, reverse = false) => {
+        console.log("----------");
+        console.log(reverse ? "INVERSA" : "NORMAL");
+        images.forEach((image, index) => {
+            setTimeout(() => {
+                image.style.opacity = opacity;
+            }, (reverse ? totalImages - index : index + 1) * intervalTime);
+        });
+    };
 
-Array.from(images).forEach((image, index) => {
-    setInterval(() => {
-        image.style.opacity = lowOpacity;
-    }, (index + 1) * 100);
-});
-Array.from(images).reverse().forEach((image, index) => {
-    setInterval(() => {
-        image.style.opacity = fullOpacity;
-    }, (index + 1) * 100);
+    const OpacityChange = () => {
+        changeOpacity(lowOpacity);
+
+        setTimeout(() => {
+            changeOpacity(fullOpacity, true);
+        }, totalImages * intervalTime);
+    };
+
+    const InitOpacityChange = () => {
+        OpacityChange();
+        setTimeout(() => {
+            OpacityChange();
+        }, 1800);
+    };
+
+    InitOpacityChange();
 });
