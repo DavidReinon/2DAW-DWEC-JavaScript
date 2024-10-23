@@ -1,18 +1,22 @@
+//Ejercicio 1 y 2.
 const buttons = document.getElementsByTagName("button");
 
-const saveData = () => {
-    const name = document.getElementsByName("name")[0];
-    const first_surname = document.getElementsByName("first_surname")[0];
-    const second_surname = document.getElementsByName("second_surname")[0];
-    const dni = document.getElementsByName("dni")[0];
-    const textColor = document.getElementById("color").value || null;
+const saveData = (firstSection = true) => {
+    const name = document.getElementsByName("name")[firstSection ? 0 : 1];
+    const first_surname =
+        document.getElementsByName("first_surname")[firstSection ? 0 : 1];
+    const second_surname =
+        document.getElementsByName("second_surname")[firstSection ? 0 : 1];
+    const dni = document.getElementsByName("dni")[firstSection ? 0 : 1];
+    const colorSelect = document.getElementById("color");
+    const selectedText = colorSelect.options[colorSelect.selectedIndex].text
 
     const data = {
         name: name.value,
         first_surname: first_surname.value,
         second_surname: second_surname.value,
         dni: dni.value,
-        textColor: textColor,
+        textColor: selectedText,
     };
 
     window.localStorage.setItem(dni.value, JSON.stringify(data));
@@ -35,11 +39,12 @@ const displayData = (id, firstSection = true) => {
         return;
     }
     const parsedData = JSON.parse(data);
-    p.style.color = data.textColor;
-    p.textContent = `Nombre: ${parsedData.name}, Primer Apellido: ${parsedData.first_surname}, Segundo Apellido: ${parsedData.second_surname}, DNI: ${parsedData.dni}`;
+    p.style.color = parsedData.textColor;
+    p.textContent = `Nombre: ${parsedData.name}, Primer Apellido: ${parsedData.first_surname}, 
+    Segundo Apellido: ${parsedData.second_surname}, DNI: ${parsedData.dni}`;
 };
 
-const deleteData = (id) => {
+const deleteUserData = (id) => {
     if (!id) return;
 
     window.localStorage.removeItem(id);
@@ -50,27 +55,40 @@ const deleteAllData = () => {
 };
 
 const init = () => {
-    buttons[0].addEventListener("click", saveData);
-    const idDisplayElement = document.getElementsByName("get_data")[0];
-    buttons[1].addEventListener("click", () =>
-        displayData(idDisplayElement.value)
-    );
-    const idDeleteElement = document.getElementsByName("delete_item")[0];
-    buttons[2].addEventListener("click", () =>
-        deleteData(idDeleteElement.value)
-    );
-    buttons[3].addEventListener("click", deleteAllData);
+    const ejercicio1 = () => {
+        buttons[0].addEventListener("click", saveData);
 
-    buttons[4].addEventListener("click", saveData);
-    const idDisplayElement2 = document.getElementsByName("get_data")[1];
-    buttons[5].addEventListener("click", () =>
-        displayData(idDisplayElement2.value)
-    );
-    const idDeleteElement2 = document.getElementsByName("delete_item")[1];
-    buttons[6].addEventListener("click", () =>
-        deleteData(idDeleteElement2.value)
-    );
-    buttons[7].addEventListener("click", deleteAllData);
+        const idDisplayElement = document.getElementsByName("get_data")[0];
+        buttons[1].addEventListener("click", () =>
+            displayData(idDisplayElement.value)
+        );
+
+        const idDeleteElement = document.getElementsByName("delete_item")[0];
+        buttons[2].addEventListener("click", () =>
+            deleteUserData(idDeleteElement.value)
+        );
+
+        buttons[3].addEventListener("click", deleteAllData);
+    };
+
+    const ejercicio2 = () => {
+        buttons[4].addEventListener("click", () => saveData(false));
+
+        const idDisplayElement = document.getElementsByName("get_data")[1];
+        buttons[5].addEventListener("click", () =>
+            displayData(idDisplayElement.value, false)
+        );
+
+        const idDeleteElement = document.getElementsByName("delete_item")[1];
+        buttons[6].addEventListener("click", () =>
+            deleteUserData(idDeleteElement.value)
+        );
+
+        buttons[7].addEventListener("click", deleteAllData);
+    };
+
+    ejercicio1();
+    ejercicio2();
 };
 
 init();
