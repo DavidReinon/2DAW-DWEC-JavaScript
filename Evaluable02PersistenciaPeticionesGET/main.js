@@ -10,15 +10,15 @@ const getData = async (url = "https://pokeapi.co/api/v2/pokemon") => {
     }
 };
 
-let pokemonsDataList = [];
 let pokemonsPageResult = [];
+let pokemonsDataList = [];
 
 const fetchAllPokemonsData = async () => {
     pokemonsPageResult = await getData();
     //name and url(get)s
     console.log(pokemonsPageResult);
 
-    pokemonsPageResult.results.map(async (onePokemon) => {
+    const promises = pokemonsPageResult.results.map(async (onePokemon) => {
         const pokemonData = await getData(onePokemon.url);
 
         const pokemonFinalData = {
@@ -32,24 +32,36 @@ const fetchAllPokemonsData = async () => {
         };
         pokemonsDataList.push(pokemonFinalData);
     });
+    await Promise.all(promises); // Esperar a que todas las promesas se resuelvan
     console.log(pokemonsDataList);
 };
 
-const displayPokemonsData = () => {
-    const cardDiv = document.document.querySelector('.card');;
-    const photoDiv = cardDiv.querySelector(".photo");
+const displayPokemonsData = async () => {
+    await fetchAllPokemonsData(); // Esperar a que los datos se carguen
+    const gridDiv = document.querySelector(".grid");
+    const cardDiv = document.querySelector(".card");
 
-    photoDiv.style.backgroundRepeat = 'repeat';
-    photoDiv.style.backgroundSize = 'auto';
-    const newImg = document.createElement("img");
-    photoDiv.append(newImg);
+    pokemonsDataList.map((onePokemon, index) => {
+        if (index >= 3) return;
 
-    const clonedCard = cardDiv.cloneNode(true);
-    document.body.appendChild(clonedCard);
+        const clonedCard = cardDiv.cloneNode(true);
+        gridDiv.appendChild(clonedCard);
+
+        const title = clonedCard.querySelector(".card-title");
+        title.textContent = onePokemon.name; // Usar textContent en lugar de value
+
+        const image = clonedCard.querySelector(".photo");
+        image.style.backgroundImage = `url(${onePokemon.images[0]})`; // Establecer la imagen de fondo
+        image.style.backgroundRepeat = "repeat";
+        image.style.backgroundSize = "auto"; // Ajustar el tamaño de la imagen
+    });
+
+    // Eliminar la tarjeta original
+    cardDiv.remove();
 };
 
 const init = () => {
-    fetchAllPokemonsData();
+    displayPokemonsData();
 };
 
 init();
