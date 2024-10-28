@@ -32,12 +32,12 @@ const fetchAllPokemonsData = async () => {
         };
         pokemonsDataList.push(pokemonFinalData);
     });
-    await Promise.all(promises); // Esperar a que todas las promesas se resuelvan
+    await Promise.all(promises);
     console.log(pokemonsDataList);
 };
 
 const displayPokemonsData = async () => {
-    await fetchAllPokemonsData(); // Esperar a que los datos se carguen
+    await fetchAllPokemonsData();
     const gridDiv = document.querySelector(".grid");
     const cardDiv = document.querySelector(".card");
 
@@ -48,12 +48,12 @@ const displayPokemonsData = async () => {
         gridDiv.appendChild(clonedCard);
 
         const title = clonedCard.querySelector(".card-title");
-        title.textContent = onePokemon.name; // Usar textContent en lugar de value
+        title.textContent = onePokemon.name;
 
         const image = clonedCard.querySelector(".photo");
-        image.style.backgroundImage = `url(${onePokemon.images[0]})`; // Establecer la imagen de fondo
+        image.style.backgroundImage = `url(${onePokemon.images[0]})`;
         image.style.backgroundRepeat = "repeat";
-        image.style.backgroundSize = "auto"; // Ajustar el tamaño de la imagen
+        image.style.backgroundSize = "auto";
     });
 
     // Eliminar la tarjeta original
