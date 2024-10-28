@@ -2,7 +2,7 @@ const getData = async (url = "https://pokeapi.co/api/v2/pokemon") => {
     try {
         const response = await fetch(url);
         if (response.ok) {
-            const jsonResult = response.json();
+            const jsonResult = await response.json();
             return jsonResult;
         }
     } catch (e) {
@@ -13,9 +13,11 @@ const getData = async (url = "https://pokeapi.co/api/v2/pokemon") => {
 let pokemonsPageResult = [];
 let pokemonsDataList = [];
 
+const ImageIndexLimit = 3;
+const ImageIndexStart = 0;
+
 const fetchAllPokemonsData = async () => {
     pokemonsPageResult = await getData();
-    //name and url(get)s
     console.log(pokemonsPageResult);
 
     const promises = pokemonsPageResult.results.map(async (onePokemon) => {
@@ -29,11 +31,54 @@ const fetchAllPokemonsData = async () => {
                 pokemonData.sprites.back_shiny,
                 pokemonData.sprites.front_shiny,
             ],
+            currentImageIndex: 0, // Añadir índice de imagen actual
         };
         pokemonsDataList.push(pokemonFinalData);
     });
     await Promise.all(promises);
     console.log(pokemonsDataList);
+};
+
+const updatePokemonImage = (pokemonElement, imageElement) => {
+    imageElement.style.backgroundImage = `url(${
+        pokemonElement.images[pokemonElement.currentImageIndex]
+    })`;
+};
+
+const nextPokemonImage = (pokemonElement, imageElement) => {
+    pokemonElement.currentImageIndex =
+        pokemonElement.currentImageIndex + 1 > ImageIndexLimit
+            ? ImageIndexStart
+            : pokemonElement.currentImageIndex + 1;
+
+    updatePokemonImage(pokemonElement, imageElement);
+};
+
+const previousPokemonImage = (pokemonElement, imageElement) => {
+    pokemonElement.currentImageIndex =
+        pokemonElement.currentImageIndex - 1 < ImageIndexStart
+            ? ImageIndexLimit
+            : pokemonElement.currentImageIndex - 1;
+
+    updatePokemonImage(pokemonElement, imageElement);
+};
+
+const showPokemonModal = (pokemonElement) => {
+    //First Modal = using querySelector()
+    const modal = document.querySelector(".modal");
+    modal.className = "modal show-modal";
+
+    const modalImage = modal.querySelector("img");
+    modalImage.src = pokemonElement.images[pokemonElement.currentImageIndex];
+    modalImage.alt = pokemonElement.name;
+
+    const modalTag = modal.querySelector(".tag");
+    modalTag.textContent = pokemonElement.name;
+
+    const closeButton = modal.querySelector(".close-button");
+    closeButton.addEventListener("click", () => {
+        modal.className = "modal";
+    });
 };
 
 const displayPokemonsData = async () => {
@@ -51,9 +96,25 @@ const displayPokemonsData = async () => {
         title.textContent = onePokemon.name;
 
         const image = clonedCard.querySelector(".photo");
-        image.style.backgroundImage = `url(${onePokemon.images[0]})`;
-        image.style.backgroundRepeat = "repeat";
-        image.style.backgroundSize = "auto";
+        updatePokemonImage(onePokemon, image);
+
+        const carusselButtons = clonedCard.querySelectorAll(
+            ".render-more button"
+        );
+        const previousButton = carusselButtons[0];
+        const nextButton = carusselButtons[1];
+
+        previousButton.addEventListener("click", () =>
+            previousPokemonImage(onePokemon, image)
+        );
+        nextButton.addEventListener("click", () =>
+            nextPokemonImage(onePokemon, image)
+        );
+
+        const enlargeButton = clonedCard.querySelector(".bigger .trigger");
+        enlargeButton.addEventListener("click", () =>
+            showPokemonModal(onePokemon)
+        );
     });
 
     // Eliminar la tarjeta original
