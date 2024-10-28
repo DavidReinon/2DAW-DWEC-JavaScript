@@ -63,6 +63,11 @@ const previousPokemonImage = (pokemonElement, imageElement) => {
     updatePokemonImage(pokemonElement, imageElement);
 };
 
+const addLocalStorage = (pokemonElement) => {
+    const pokemonData = JSON.stringify(pokemonElement);
+    localStorage.setItem(pokemonElement.name, pokemonData);
+};
+
 const showPokemonModal = (pokemonElement) => {
     //First Modal = using querySelector()
     const modal = document.querySelector(".modal");
@@ -74,11 +79,50 @@ const showPokemonModal = (pokemonElement) => {
 
     const modalTag = modal.querySelector(".tag");
     modalTag.textContent = pokemonElement.name;
+    modalTag.addEventListener("click", () => {
+        addLocalStorage(pokemonElement);
+    });
 
     const closeButton = modal.querySelector(".close-button");
     closeButton.addEventListener("click", () => {
         modal.className = "modal";
     });
+};
+
+const showFavoriteModal = () => {
+    //Second Modal = using querySelectorAll()
+    const modal = document.querySelectorAll(".modal")[1];
+    modal.className = "modal show-modal";
+
+    //prevente default
+    const searchFavoritePokemon = (input) => {
+        const data = window.localStorage.getItem(input.value.toLowerCase());
+
+        if (!data) {
+            alert("No existe el pokemon en favoritos");
+            return;
+        }
+
+        modal.className = "modal";
+        //TODO: Arreglar el modal para que muestre el pokemon favorito
+        showPokemonModal(JSON.parse(data));
+    };
+
+    // const modalImage = modal.querySelector("img");
+    // modalImage.src = pokemonElement.images[pokemonElement.currentImageIndex];
+    // modalImage.alt = pokemonElement.name;
+
+    // const modalTag = modal.querySelector(".tag");
+    // modalTag.textContent = pokemonElement.name;
+
+    const closeButton = modal.querySelector(".close-button");
+    closeButton.addEventListener("click", () => {
+        modal.className = "modal";
+    });
+
+    const input = modal.querySelector(".input");
+    const buttonSubmit = modal.querySelector(".send");
+    buttonSubmit.addEventListener("click", () => searchFavoritePokemon(input));
 };
 
 const displayPokemonsData = async () => {
@@ -115,14 +159,21 @@ const displayPokemonsData = async () => {
         enlargeButton.addEventListener("click", () =>
             showPokemonModal(onePokemon)
         );
+
     });
 
     // Eliminar la tarjeta original
     cardDiv.remove();
 };
 
+const favoriteFunctionality = () => {
+    const favoriteButton = document.querySelector(".question-link");
+    favoriteButton.addEventListener("click", () => showFavoriteModal());
+}
+
 const init = () => {
     displayPokemonsData();
+    favoriteFunctionality();
 };
 
 init();
