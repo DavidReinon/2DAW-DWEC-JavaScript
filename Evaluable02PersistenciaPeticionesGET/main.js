@@ -12,6 +12,7 @@ const getData = async (url = "https://pokeapi.co/api/v2/pokemon") => {
 
 let pokemonsPageResult = [];
 let pokemonsDataList = [];
+let pokemonsActualPage = 0;
 
 const ImageIndexLimit = 3;
 const ImageIndexStart = 0;
@@ -130,13 +131,13 @@ const showFavoriteModal = () => {
     });
 };
 
-const displayPokemonsData = async () => {
+const displayPokemonsData = async (displayAllPageData = false) => {
     await fetchAllPokemonsData();
     const gridDiv = document.querySelector(".grid");
     const cardDiv = document.querySelector(".card");
 
     pokemonsDataList.map((onePokemon, index) => {
-        if (index >= 3) return;
+        if (!displayAllPageData && index >= 3) return;
 
         const clonedCard = cardDiv.cloneNode(true);
         gridDiv.appendChild(clonedCard);
@@ -173,6 +174,11 @@ const displayPokemonsData = async () => {
 const favoriteFunctionality = () => {
     const favoriteTitle = document.querySelector(".question-link");
     favoriteTitle.addEventListener("click", showFavoriteModal);
+};
+
+const showMore = () => {
+    const renderMoreButton = document.querySelector("#render-more");
+    displayPokemonsData(true);
 };
 
 const init = () => {
