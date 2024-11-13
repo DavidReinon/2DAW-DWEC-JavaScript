@@ -10,8 +10,13 @@ const getData = async (url = "https://pokeapi.co/api/v2/pokemon") => {
     }
 };
 
+//Llamada a la API para acceder a la url de 20 pokemons (correspodiente a la paginción)
 let pokemonsPageResult = [];
+
+//Llamada a la API con la url de cada pokemon en concreto para formar lista de pokemons con sus datos completos
 let pokemonsDataList = [];
+
+//??Pagina Actual
 let pokemonsActualPage = 0;
 
 const ImageIndexLimit = 3;
