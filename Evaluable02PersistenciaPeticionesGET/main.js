@@ -1,6 +1,7 @@
-const getData = async (url = "https://pokeapi.co/api/v2/pokemon") => {
+const getData = async (url) => {
+    const finalUrl = url || "https://pokeapi.co/api/v2/pokemon/";
     try {
-        const response = await fetch(url);
+        const response = await fetch(finalUrl);
         if (response.ok) {
             const jsonResult = await response.json();
             return jsonResult;
@@ -16,34 +17,11 @@ let pokemonsPageResult = [];
 //Llamada a la API con la url de cada pokemon en concreto para formar lista de pokemons con sus datos completos
 let pokemonsDataList = [];
 
-//??Pagina Actual
-let pokemonsActualPage = 0;
+//Pagina Actual, cambiar cada vez que se cambie de página
+let pokemonsActualPage = 1;
 
 const ImageIndexLimit = 3;
 const ImageIndexStart = 0;
-
-const fetchAllPokemonsData = async () => {
-    pokemonsPageResult = await getData();
-    console.log(pokemonsPageResult);
-
-    const promises = pokemonsPageResult.results.map(async (onePokemon) => {
-        const pokemonData = await getData(onePokemon.url);
-
-        const pokemonFinalData = {
-            name: pokemonData.name,
-            images: [
-                pokemonData.sprites.front_default,
-                pokemonData.sprites.back_default,
-                pokemonData.sprites.back_shiny,
-                pokemonData.sprites.front_shiny,
-            ],
-            currentImageIndex: 0, // Añadir índice de imagen actual
-        };
-        pokemonsDataList.push(pokemonFinalData);
-    });
-    await Promise.all(promises);
-    console.log(pokemonsDataList);
-};
 
 const updatePokemonImage = (pokemonElement, imageElement) => {
     imageElement.style.backgroundImage = `url(${
@@ -124,7 +102,7 @@ const showFavoriteModal = () => {
     };
 
     const form = modal.querySelector("form");
-    
+
     if (!form.dataset.listenerAdded) {
         form.addEventListener("submit", searchFavoritePokemon);
         form.dataset.listenerAdded = "true";
@@ -136,15 +114,45 @@ const showFavoriteModal = () => {
     });
 };
 
-const displayPokemonsData = async (displayAllPageData = false) => {
-    await fetchAllPokemonsData();
+const fetchAllPokemonsData = async (url) => {
+    //Revisar que se esta actualizaando pokemonsActualPage
+    const finalUrl =
+        url + `?offset=${pokemonsOffset * pokemonsActualPage}&limit=20`;
+
+    pokemonsPageResult = await getData(url);
+    console.log(pokemonsPageResult);
+
+    const promises = pokemonsPageResult.results.map(async (onePokemon) => {
+        const pokemonData = await getData(onePokemon.url);
+
+        const pokemonFinalData = {
+            name: pokemonData.name,
+            images: [
+                pokemonData.sprites.front_default,
+                pokemonData.sprites.back_default,
+                pokemonData.sprites.back_shiny,
+                pokemonData.sprites.front_shiny,
+            ],
+            currentImageIndex: 0, // Añadir índice de imagen actual
+        };
+        pokemonsDataList.push(pokemonFinalData);
+    });
+    await Promise.all(promises);
+    console.log(pokemonsDataList);
+};
+
+const displayPokemonsData = async (displayAllPageData = false, url = null) => {
+    if (!displayAllPageData) {
+        await fetchAllPokemonsData(url);
+    }
+
     const gridDiv = document.querySelector(".grid");
-    const cardDiv = document.querySelector(".card");
+    const oldCardDivs = document.querySelectorAll(".card");
 
     pokemonsDataList.map((onePokemon, index) => {
         if (!displayAllPageData && index >= 3) return;
 
-        const clonedCard = cardDiv.cloneNode(true);
+        const clonedCard = oldCardDivs[0].cloneNode(true);
         gridDiv.appendChild(clonedCard);
 
         const title = clonedCard.querySelector(".card-title");
@@ -172,23 +180,55 @@ const displayPokemonsData = async (displayAllPageData = false) => {
         );
     });
 
-    // Eliminar la tarjeta original
-    cardDiv.remove();
+    oldCardDivs.forEach((card) => {
+        card.remove();
+    });
 };
 
-const favoriteFunctionality = () => {
+const favoritesFunctionality = () => {
     const favoriteTitle = document.querySelector(".question-link");
     favoriteTitle.addEventListener("click", showFavoriteModal);
 };
 
-const showMore = () => {
-    const renderMoreButton = document.querySelector("#render-more");
-    displayPokemonsData(true);
+const createPaginationButtons = () => {
+    const renderMoreDiv = document.querySelector("#render-more");
+
+    const previousButton = document.createElement("button");
+    previousButton.textContent = "Anterior";
+    const nextButton = document.createElement("button");
+    nextButton.textContent = "Siguiente";
+
+    renderMoreDiv.appendChild(previousButton);
+    renderMoreDiv.appendChild(nextButton);
+
+    previousButton.addEventListener("click", () => {
+        pokemonsActualPage--;
+        displayPokemonsData();
+    });
+
+    nextButton.addEventListener("click", () => {
+        pokemonsActualPage++;
+        displayPokemonsData();
+    });
+};
+
+const renderMoreFunctionality = () => {
+    const renderMoreDiv = document.querySelector("#render-more");
+
+    const renderMoreButton = renderMoreDiv.querySelector("button");
+    renderMoreButton.addEventListener("click", () => {
+        displayPokemonsData(true);
+
+        //Gestionar fuincinalidades carrusel paginación
+        createPaginationButtons();
+        renderMoreButton.remove();
+    });
 };
 
 const init = () => {
     displayPokemonsData();
-    favoriteFunctionality();
+    favoritesFunctionality();
+    renderMoreFunctionality();
 };
 
 init();
