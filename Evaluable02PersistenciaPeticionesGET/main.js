@@ -1,7 +1,18 @@
-const getData = async (url) => {
-    const finalUrl = url || "https://pokeapi.co/api/v2/pokemon/";
+//Llamada a la API para acceder a la url de 20 pokemons (correspodiente a la paginción)
+let pokemonsPageResult = [];
+
+//Llamada a la API con la url de cada pokemon en concreto para formar lista de pokemons con sus datos completos
+let pokemonsDataList = [];
+
+const firstPageUrl = "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20";
+const lastPageUrl = "https://pokeapi.co/api/v2/pokemon/?offset=1300&limit=20";
+
+const ImageIndexLimit = 3;
+const ImageIndexStart = 0;
+
+async function getData(url) {
     try {
-        const response = await fetch(finalUrl);
+        const response = await fetch(url || firstPageUrl);
         if (response.ok) {
             const jsonResult = await response.json();
             return jsonResult;
@@ -9,16 +20,7 @@ const getData = async (url) => {
     } catch (e) {
         alert("Api call Error.", e);
     }
-};
-
-//Llamada a la API para acceder a la url de 20 pokemons (correspodiente a la paginción)
-let pokemonsPageResult = [];
-
-//Llamada a la API con la url de cada pokemon en concreto para formar lista de pokemons con sus datos completos
-let pokemonsDataList = [];
-
-const ImageIndexLimit = 3;
-const ImageIndexStart = 0;
+}
 
 const updatePokemonImage = (pokemonElement, imageElement) => {
     imageElement.style.backgroundImage = `url(${
@@ -183,35 +185,73 @@ const favoritesFunctionality = () => {
     favoriteTitle.addEventListener("click", showFavoriteModal);
 };
 
-const createPaginationButtons = (renderMoreDiv) => {
-    const previousButton = document.createElement("button");
-    previousButton.textContent = "Anterior";
-    const nextButton = document.createElement("button");
-    nextButton.textContent = "Siguiente";
-
-    renderMoreDiv.appendChild(previousButton);
-    renderMoreDiv.appendChild(nextButton);
-
-    previousButton.addEventListener("click", () => {
-        //displayPokemonsData();
-    });
-
-    nextButton.addEventListener("click", () => {
-        //displayPokemonsData();
-    });
-};
-
 const renderMoreFunctionality = () => {
+    const renderButtonClickEvent = (e) => {
+        //Solo indicar con true que se renderize todos los elementos (20)
+        //No hace falta url porque ya esta la información y no se va a hacer otra llamada a la API
+        displayPokemonsData(true);
+
+        createPaginationButtons();
+        e.target.remove();
+    };
+
+    const createPaginationButtons = () => {
+        const previousButton = document.createElement("button");
+        previousButton.textContent = "Anterior";
+        const nextButton = document.createElement("button");
+        nextButton.textContent = "Siguiente";
+
+        renderMoreDiv.appendChild(previousButton);
+        renderMoreDiv.appendChild(nextButton);
+
+        const deletePaginationButtons = () => {
+            previousButton.remove();
+            nextButton.remove();
+        };
+
+        const createNewRenderMoreButton = () => {
+            const newRenderMoreButton = document.createElement("button");
+            newRenderMoreButton.textContent = "Render More";
+            newRenderMoreButton.addEventListener(
+                "click",
+                renderButtonClickEvent
+            );
+
+            renderMoreDiv.appendChild(newRenderMoreButton);
+        };
+
+        const managePagination = (isNext) => {
+            if (!isNext) {
+                return pokemonsPageResult.previous || lastPageUrl;
+            }
+
+            //Como predeterminadamente se usa la url la primera página, no hace falta controlar si es null
+            return pokemonsPageResult.next;
+        };
+
+        const changePage = (isNext) => {
+            pokemonsDataList = [];
+            displayPokemonsData(false, managePagination(isNext));
+
+            //En el caso de renderizar la ultima pagina con solo 2 pokmemons, no hace falta renderizar mas
+
+            deletePaginationButtons();
+            createNewRenderMoreButton();
+        };
+
+        previousButton.addEventListener("click", () => {
+            changePage(false);
+        });
+
+        nextButton.addEventListener("click", () => {
+            changePage(true);
+        });
+    };
+
     const renderMoreDiv = document.querySelector("#render-more");
 
     const renderMoreButton = renderMoreDiv.querySelector("button");
-    renderMoreButton.addEventListener("click", () => {
-        displayPokemonsData(true);
-
-        //Gestionar fuincinalidades carrusel paginación
-        createPaginationButtons(renderMoreDiv);
-        renderMoreButton.remove();
-    });
+    renderMoreButton.addEventListener("click", renderButtonClickEvent);
 };
 
 const init = () => {
