@@ -17,9 +17,6 @@ let pokemonsPageResult = [];
 //Llamada a la API con la url de cada pokemon en concreto para formar lista de pokemons con sus datos completos
 let pokemonsDataList = [];
 
-//Pagina Actual, cambiar cada vez que se cambie de página
-let pokemonsActualPage = 1;
-
 const ImageIndexLimit = 3;
 const ImageIndexStart = 0;
 
@@ -115,10 +112,6 @@ const showFavoriteModal = () => {
 };
 
 const fetchAllPokemonsData = async (url) => {
-    //Revisar que se esta actualizaando pokemonsActualPage
-    const finalUrl =
-        url + `?offset=${pokemonsOffset * pokemonsActualPage}&limit=20`;
-
     pokemonsPageResult = await getData(url);
     console.log(pokemonsPageResult);
 
@@ -147,7 +140,7 @@ const displayPokemonsData = async (displayAllPageData = false, url = null) => {
     }
 
     const gridDiv = document.querySelector(".grid");
-    const oldCardDivs = document.querySelectorAll(".card");
+    const oldCardDivs = document.querySelectorAll(".content .card");
 
     pokemonsDataList.map((onePokemon, index) => {
         if (!displayAllPageData && index >= 3) return;
@@ -190,9 +183,7 @@ const favoritesFunctionality = () => {
     favoriteTitle.addEventListener("click", showFavoriteModal);
 };
 
-const createPaginationButtons = () => {
-    const renderMoreDiv = document.querySelector("#render-more");
-
+const createPaginationButtons = (renderMoreDiv) => {
     const previousButton = document.createElement("button");
     previousButton.textContent = "Anterior";
     const nextButton = document.createElement("button");
@@ -202,13 +193,11 @@ const createPaginationButtons = () => {
     renderMoreDiv.appendChild(nextButton);
 
     previousButton.addEventListener("click", () => {
-        pokemonsActualPage--;
-        displayPokemonsData();
+        //displayPokemonsData();
     });
 
     nextButton.addEventListener("click", () => {
-        pokemonsActualPage++;
-        displayPokemonsData();
+        //displayPokemonsData();
     });
 };
 
@@ -220,7 +209,7 @@ const renderMoreFunctionality = () => {
         displayPokemonsData(true);
 
         //Gestionar fuincinalidades carrusel paginación
-        createPaginationButtons();
+        createPaginationButtons(renderMoreDiv);
         renderMoreButton.remove();
     });
 };
