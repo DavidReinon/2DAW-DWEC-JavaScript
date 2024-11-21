@@ -191,11 +191,11 @@ const renderMoreFunctionality = () => {
         //No hace falta url porque ya esta la información y no se va a hacer otra llamada a la API
         displayPokemonsData(true);
 
-        createPaginationButtons();
+        managePaginationButtons();
         e.target.remove();
     };
 
-    const createPaginationButtons = () => {
+    const managePaginationButtons = () => {
         const previousButton = document.createElement("button");
         previousButton.textContent = "Anterior";
         const nextButton = document.createElement("button");
@@ -229,14 +229,15 @@ const renderMoreFunctionality = () => {
             return pokemonsPageResult.next;
         };
 
-        const changePage = (isNext) => {
+        const changePage = async (isNext) => {
             pokemonsDataList = [];
-            displayPokemonsData(false, managePagination(isNext));
+            await displayPokemonsData(false, managePagination(isNext));
 
             //En el caso de renderizar la ultima pagina con solo 2 pokmemons, no hace falta renderizar mas
-
-            deletePaginationButtons();
-            createNewRenderMoreButton();
+            if (pokemonsDataList.length > 2) {
+                deletePaginationButtons();
+                createNewRenderMoreButton();
+            }
         };
 
         previousButton.addEventListener("click", () => {
