@@ -72,47 +72,6 @@ const showPokemonModal = (pokemonElement) => {
     });
 };
 
-const showFavoriteModal = () => {
-    //Second Modal = using querySelectorAll()
-    const modal = document.querySelectorAll(".modal")[1];
-    modal.className = "modal show-modal";
-
-    const searchFavoritePokemon = (e) => {
-        e.preventDefault();
-        const input = modal.querySelector(".input");
-        const pokemondData = window.localStorage.getItem(
-            input.value.toLowerCase()
-        );
-
-        if (!pokemondData) {
-            alert("No existe el pokemon en favoritos");
-            return;
-        }
-
-        const pokemondDataParsed = JSON.parse(pokemondData);
-
-        const modalImage = modal.querySelector("img");
-        modalImage.src =
-            pokemondDataParsed.images[pokemondDataParsed.currentImageIndex];
-        modalImage.alt = pokemondDataParsed.name;
-
-        const modalTag = modal.querySelector(".tag");
-        modalTag.textContent = pokemondDataParsed.name;
-    };
-
-    const form = modal.querySelector("form");
-
-    if (!form.dataset.listenerAdded) {
-        form.addEventListener("submit", searchFavoritePokemon);
-        form.dataset.listenerAdded = "true";
-    }
-
-    const closeButton = modal.querySelector(".close-button");
-    closeButton.addEventListener("click", () => {
-        modal.className = "modal";
-    });
-};
-
 const fetchAllPokemonsData = async (url) => {
     pokemonsPageResult = await getData(url);
     console.log(pokemonsPageResult);
@@ -181,8 +140,59 @@ const displayPokemonsData = async (displayAllPageData = false, url = null) => {
 };
 
 const favoritesFunctionality = () => {
+    //Second Modal = using querySelectorAll()
+    const modal = document.querySelectorAll(".modal")[1];
+
+    const showFavoriteModal = () => {
+        modal.className = "modal show-modal";
+    };
+
+    const initializeFavoriteModal = () => {
+        const containerDivClone = modal
+            .querySelector(".container")
+            .cloneNode(true);
+
+        const searchFavoritePokemon = (e) => {
+            e.preventDefault();
+            const input = modal.querySelector(".input");
+            const pokemondData = window.localStorage.getItem(
+                input.value.toLowerCase()
+            );
+
+            if (!pokemondData) {
+                alert("No existe el pokemon en favoritos");
+                return;
+            }
+
+            const pokemondDataParsed = JSON.parse(pokemondData);
+
+            const modalImage = modal.querySelector("img");
+            modalImage.src =
+                pokemondDataParsed.images[pokemondDataParsed.currentImageIndex];
+            modalImage.alt = pokemondDataParsed.name;
+
+            const modalTag = modal.querySelector(".tag");
+            modalTag.textContent = pokemondDataParsed.name;
+        };
+
+        const closeModal = () => {
+            modal.className = "modal";
+
+            // Restaurar el contenido inicial del modal
+            const containerDiv = modal.querySelector(".container");
+            containerDiv.replaceWith(containerDivClone.cloneNode(true));
+        };
+
+        const form = modal.querySelector("form");
+        form.addEventListener("submit", searchFavoritePokemon);
+
+        const closeButton = modal.querySelector(".close-button");
+        closeButton.addEventListener("click", closeModal);
+    };
+
     const favoriteTitle = document.querySelector(".question-link");
     favoriteTitle.addEventListener("click", showFavoriteModal);
+    initializeFavoriteModal();
 };
 
 const renderMoreFunctionality = () => {
