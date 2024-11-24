@@ -46,12 +46,12 @@ const previousPokemonImage = (pokemonElement, imageElement) => {
     updatePokemonImage(pokemonElement, imageElement);
 };
 
-const addLocalStorage = (pokemonElement) => {
-    const pokemonData = JSON.stringify(pokemonElement);
-    localStorage.setItem(pokemonElement.name, pokemonData);
-};
-
 const showPokemonModal = (pokemonElement) => {
+    const addLocalStorage = (pokemonElement) => {
+        const pokemonData = JSON.stringify(pokemonElement);
+        localStorage.setItem(pokemonElement.name, pokemonData);
+    };
+
     //First Modal = using querySelector()
     const modal = document.querySelector(".modal");
     modal.className = "modal show-modal";
@@ -142,6 +142,7 @@ const displayPokemonsData = async (displayAllPageData = false, url = null) => {
 const favoritesFunctionality = () => {
     //Second Modal = using querySelectorAll()
     const modal = document.querySelectorAll(".modal")[1];
+    const favoriteTitle = document.querySelector(".question-link");
 
     const showFavoriteModal = () => {
         modal.className = "modal show-modal";
@@ -181,16 +182,18 @@ const favoritesFunctionality = () => {
             // Restaurar el contenido inicial del modal
             const containerDiv = modal.querySelector(".container");
             containerDiv.replaceWith(containerDivClone.cloneNode(true));
+
+            // Re-inicializar el formulario y el botón de cierre
+            initializeFavoriteModal();
         };
 
         const form = modal.querySelector("form");
-        form.addEventListener("submit", searchFavoritePokemon);
-
         const closeButton = modal.querySelector(".close-button");
+
+        form.addEventListener("submit", (e) => searchFavoritePokemon(e));
         closeButton.addEventListener("click", closeModal);
     };
 
-    const favoriteTitle = document.querySelector(".question-link");
     favoriteTitle.addEventListener("click", showFavoriteModal);
     initializeFavoriteModal();
 };
